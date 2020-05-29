@@ -1,6 +1,7 @@
 # Prometheus-collector
 A plugin for Nightingale is used to collect metrics from prometheus exporters.
 
+
 ## Building and running 
 
     $ mkdir -p $GOPATH/src/github.com/n9e
@@ -9,6 +10,7 @@ A plugin for Nightingale is used to collect metrics from prometheus exporters.
     $ cd prometheus-collector
     $ go build
     $ ./prometheus-collector -p {"target_urls": ["http://xx:9104/metrics?dns=xxip:3306"],"endpoint": "","service": "","step": 10,"username": "","password": ""}
+
 
  ### Command Parameters
  Name                             |  type     | Description
