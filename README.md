@@ -9,7 +9,7 @@ A plugin for Nightingale is used to collect metrics from prometheus exporters.
     $ git clone https://github.com/n9e/prometheus-collector.git
     $ cd prometheus-collector
     $ go build
-    $ ./prometheus-collector -p "{\"target_urls\": [\"http://{$ip}:9103/metrics?dns={$ip}:3306\"],\"endpoint\":\"xx\",\"service\":\"xxx\",\"step\":10,\"username\":\"\",\"password\":\"\"}"
+    $ ./prometheus-collector -p "{\"target_urls\": [\"http://$ip:9103/metrics?dns=$ip:3306\"],\"endpoint\":\"xx\",\"service\":\"xxx\",\"step\":10,\"username\":\"\",\"password\":\"\"}"
 
 
  ### Command Parameters
