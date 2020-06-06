@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"strings"
 	"time"
 
 	"github.com/didi/nightingale/src/dataobj"
@@ -29,7 +30,6 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 
 	// Prepare output
 	metricFamilies := make(map[string]*dto.MetricFamily)
-
 	metricFamilies, err := parser.TextToMetricFamilies(reader)
 	if err != nil {
 		return nil, fmt.Errorf("reading text format failed: %s", err)
@@ -39,6 +39,10 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 	for basename, mf := range metricFamilies {
 		metrics := []*dataobj.MetricValue{}
 		for _, m := range mf.Metric {
+			// pass exporter gc metric
+			if filterExporterMetric(basename) {
+				continue
+			}
 			switch mf.GetType() {
 			case dto.MetricType_GAUGE:
 				// gauge metric
@@ -53,12 +57,14 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 				// histogram metric
 				metrics = makeBuckets(basename, m)
 			case dto.MetricType_UNTYPED:
-				// untyped as gauge metric
-				metrics = makeCommon(basename, m)
+				// untyped dropped
+				continue
 			}
 
 			// render endpoint info
 			for _, metric := range metrics {
+				// parse _ to dot
+				metric.Metric = strings.Replace(metric.Metric, "_", ".", -1)
 				metric.Step = int64(cfg.Step)
 				metric.Endpoint = cfg.Endpoint
 				if cfg.Service != "" {
@@ -152,4 +158,8 @@ func makeLabels(m *dto.Metric) map[string]string {
 		tags[lp.GetName()] = lp.GetValue()
 	}
 	return tags
+}
+
+func filterExporterMetric(basename string) bool {
+	return config.Get().IgnoreExporterMetric && strings.HasPrefix(basename, "go_")
 }

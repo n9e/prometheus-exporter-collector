@@ -17,13 +17,6 @@ func usageExit(rc int) {
 	os.Exit(rc)
 }
 
-/*todo list
-指标名称：_是否转.
-指标类型：_count,_sum是否counter类型
-exporter gc指标是否上报
-exporter：是否支持传参方式
-prom untype类型处理
-*/
 func main() {
 	flag.Usage = func() { usageExit(0) }
 	flag.Parse()

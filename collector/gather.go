@@ -27,7 +27,7 @@ func Gather() []*dataobj.MetricValue {
 		}
 	}()
 
-	for _, url := range cfg.TargetUrls {
+	for _, url := range cfg.ExporterUrls {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()

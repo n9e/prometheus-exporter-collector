@@ -10,16 +10,17 @@ The commands & flags are:
 
   -p <DATA>   json format data :
                {
-			"target_urls": ["http://xx:9104/metrics?dns=xxip:3306"],
+			"exporter_urls": ["http://xx:9104/metrics?dns=xxip:3306"],
 			"endpoint": "",
 			"service": "",
 			"step": 10,
 			"username": "",
-			"password": ""
+			"password": "",
+			"ignore_exporter_metric": false
 		}
 
 Examples:
 
   # generate a prometheus-collector param:
-  ./prometheus-collector -p {"target_urls": ["http://xx:9104/metrics?dns=xxip:3306"],"endpoint": "","service": "","step": 10,"username": "","password": ""}
+  ./prometheus-collector -p {"exporter_urls": ["http://127.0.0.1:9104/metrics?dns=xxip:3306"],"endpoint": "","service": "","step": 10,"username": "","password": ""}
 `
