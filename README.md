@@ -8,7 +8,8 @@ A plugin for Nightingale is used to collect metrics from prometheus exporters.
     $ git clone https://github.com/n9e/prometheus-collector.git
     $ cd prometheus-collector
     $ go build
-    $ ./prometheus-collector -p "{"target_urls": ["http://127.0.0.1:9104/metrics?dns=xxip:3306"],"endpoint": "","service": "","step": 10,"username": "","password": ""}"
+    $ ./prometheus-collector -p "{\"exporter_urls\": [\"http://127.0.0.1:9104/metrics?dns=$ip:3306\"],\"endpoint\":\"xx\",\"service\":\"xxx\",\"step\":10,\"username\":\"\",\"password\":\"\"}"
+
 
  ### Command Parameters
  Name                             |  type     | Description
@@ -20,4 +21,7 @@ A plugin for Nightingale is used to collect metrics from prometheus exporters.
  username                         | string    | Not needed for now
  password                         | string    | Not needed for now
  ignore_exportermetric            | bool      | Ignore exporter metrics default false
+ ###
+=======
+ 
  ###
