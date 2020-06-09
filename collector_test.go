@@ -10,6 +10,7 @@ import (
 )
 
 const validConfigParam = `{
+  "exporter_urls":["http://127.0.0.1:9104/metrics?dns=xxip:3306"],
   "append_tags": ["region=bj", "dept=cloud"],
   "endpoint": "127.0.0.1",
   "username": "xxx",
