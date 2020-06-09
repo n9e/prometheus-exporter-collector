@@ -3,30 +3,79 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
-//{"exporter_urls":["http://127.0.0.1:9103/metrics?dns=192.168.1.7:3306","http://127.0.0.1:9103/metrics?dns=192.168.1.160:3306"],"service":"","endpoint":"", "step":60,"username":"","password":""}
-
 type PluginCfg struct {
-	ExporterUrls         []string `json:"exporter_urls"`
-	Service              string   `json:"service"`
-	Step                 int      `json:"step"`
-	Endpoint             string   `json:"endpoint"`
-	Username             string   `json:"username"`
-	Password             string   `json:"password"`
-	IgnoreExporterMetric bool     `json:"ignore_exporter_metric"`
+	ExporterUrls        []string `json:"exporter_urls,omitempty"`
+	AppendTags          []string `json:"append_tags"`
+	Endpoint            string   `json:"endpoint"`
+	Username            string   `json:"username"`
+	Password            string   `json:"password"`
+	TimeOut             int      `json:"timeout"`
+	IgnoreMetricsPrefix []string `json:"ignore_metrics_prefix"`
 }
 
-var Config *PluginCfg
+var (
+	Config        *PluginCfg
+	AppendTagsMap = make(map[string]string)
+)
 
 func Get() *PluginCfg {
 	return Config
 }
 
-func Parse(config string) error {
-	err := json.Unmarshal([]byte(config), &Config)
-	if err != nil {
-		return fmt.Errorf("unmarshal config error:%v", err)
+func Parse(bs []byte) error {
+	Config = &PluginCfg{
+		ExporterUrls:        []string{},
+		AppendTags:          []string{},
+		Endpoint:            "",
+		Username:            "",
+		Password:            "",
+		TimeOut:             500,
+		IgnoreMetricsPrefix: []string{},
 	}
+
+	if err := json.Unmarshal(bs, &Config); err != nil {
+		return err
+	}
+
+	if len(Config.ExporterUrls) == 0 {
+		return fmt.Errorf("exporter urls is nil")
+	}
+
+	if err := parseAppendTagsMap(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func parseAppendTagsMap() error {
+	appendTags := Config.AppendTags
+	if appendTags == nil {
+		return nil
+	}
+
+	size := len(appendTags)
+	if size == 0 {
+		return nil
+	}
+
+	for _, tag := range appendTags {
+
+		tag = strings.Replace(tag, " ", "", -1)
+		if tag == "" {
+			continue
+		}
+
+		tagPair := strings.SplitN(tag, "=", 2)
+		if len(tagPair) == 2 {
+			AppendTagsMap[tagPair[0]] = tagPair[1]
+		} else {
+			return fmt.Errorf("bad tag %s", tag)
+		}
+	}
+
 	return nil
 }

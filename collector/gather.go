@@ -48,7 +48,7 @@ func Gather() []*dataobj.MetricValue {
 }
 
 func gatherExporter(url string) ([]*dataobj.MetricValue, error) {
-	body, err := postToExporter(url)
+	body, err := gatherExporterUrl(url)
 	if err != nil {
 		log.Printf("gather metrics from exporter error, url :[%s] ,error :%v", url, err)
 		return nil, err
@@ -63,7 +63,7 @@ func gatherExporter(url string) ([]*dataobj.MetricValue, error) {
 	return metrics, nil
 }
 
-func postToExporter(url string) ([]byte, error) {
+func gatherExporterUrl(url string) ([]byte, error) {
 	var buf []byte
 	var req *http.Request
 	req, err := http.NewRequest("GET", url, nil)
@@ -71,7 +71,9 @@ func postToExporter(url string) ([]byte, error) {
 		return buf, err
 	}
 
-	client := &http.Client{Timeout: 500 * time.Millisecond}
+	client := &http.Client{
+		Timeout: time.Duration(config.Get().TimeOut) * time.Millisecond,
+	}
 
 	var resp *http.Response
 	resp, err = client.Do(req)

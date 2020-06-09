@@ -15,12 +15,12 @@ A plugin for Nightingale is used to collect metrics from prometheus exporters.
  Name                             |  type     | Description
  ---------------------------------|-----------|--------------------------------------------------------------------------------------------------
  exporter_urls                    | array     | Address to collect metric for prometheus exporter.
- endpoint                         | string    | Field endpoint for n9e metric.
- service                          | string    | Add a service tag for n9e metric.
- step                             | int       | Step for report metrics 
+ append_tags                      | array     | Add tags for n9e metric default empty
+ endpoint                         | string    | Field endpoint for n9e metric default empty
  username                         | string    | Not needed for now
  password                         | string    | Not needed for now
- ignore_exportermetric            | bool      | Ignore exporter metrics default false
+ ignore_metrics_prefix            | array     | Ignore metric prefix default empty
+ timeout                          | int       | Timeout for access a exporter url default 500ms
  ###
 =======
  

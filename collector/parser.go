@@ -39,8 +39,8 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 	for basename, mf := range metricFamilies {
 		metrics := []*dataobj.MetricValue{}
 		for _, m := range mf.Metric {
-			// pass exporter gc metric
-			if filterExporterMetric(basename) {
+			// pass ignore metric
+			if filterIgnoreMetric(basename) {
 				continue
 			}
 			switch mf.GetType() {
@@ -57,23 +57,16 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 				// histogram metric
 				metrics = makeBuckets(basename, m)
 			case dto.MetricType_UNTYPED:
-				// untyped dropped
-				continue
+				// untyped as gauge
+				metrics = makeCommon(basename, m)
 			}
 
 			// render endpoint info
 			for _, metric := range metrics {
 				// parse _ to dot
 				metric.Metric = strings.Replace(metric.Metric, "_", ".", -1)
-				metric.Step = int64(cfg.Step)
 				metric.Endpoint = cfg.Endpoint
-				if cfg.Service != "" {
-					metric.TagsMap["service"] = cfg.Service
-				}
-
-				if len(metric.TagsMap) > 0 {
-					metric.Tags = dataobj.SortedTags(metric.TagsMap)
-				}
+				metric.Tags = makeAppendTags(metric.TagsMap, config.AppendTagsMap)
 
 				metricList = append(metricList, metric)
 			}
@@ -160,6 +153,37 @@ func makeLabels(m *dto.Metric) map[string]string {
 	return tags
 }
 
-func filterExporterMetric(basename string) bool {
-	return config.Get().IgnoreExporterMetric && strings.HasPrefix(basename, "go_")
+// append tags
+func makeAppendTags(tagsMap map[string]string, appendTagsMap map[string]string) string {
+	if len(tagsMap) == 0 && len(appendTagsMap) == 0 {
+		return ""
+	}
+
+	if len(tagsMap) == 0 {
+		return dataobj.SortedTags(appendTagsMap)
+	}
+
+	if len(appendTagsMap) == 0 {
+		return dataobj.SortedTags(tagsMap)
+	}
+
+	for k, v := range appendTagsMap {
+		tagsMap[k] = v
+	}
+
+	return dataobj.SortedTags(tagsMap)
+}
+
+func filterIgnoreMetric(basename string) bool {
+	ignorePrefix := config.Get().IgnoreMetricsPrefix
+	if len(config.Get().IgnoreMetricsPrefix) == 0 {
+		return false
+	}
+
+	for _, pre := range ignorePrefix {
+		if strings.HasPrefix(basename, pre) {
+			return true
+		}
+	}
+	return false
 }
