@@ -1,4 +1,5 @@
 # Default ignored files
 .idea
 
-./prometheus-collector
+/prometheus-collector
+/go.sum
