@@ -10,12 +10,10 @@ import (
 )
 
 const validConfigParam = `{
-  "exporter_urls":["http://127.0.0.1:9104/metrics?dns=xxip:3306"],
+  "exporter_urls":["http://127.0.0.1:8080/metrics"],
   "append_tags": ["region=bj", "dept=cloud"],
   "endpoint": "127.0.0.1",
-  "username": "xxx",
-  "password": "xxx",
-  "ignore_metrics_prefix": ["go_"],
+  "ignore_metrics_prefix": [],
   "timeout": 500
 }
 `
@@ -75,7 +73,7 @@ func TestPromMetricParser(t *testing.T) {
 
 	metrics, err := collector.Parse([]byte(validPromUntypedMetric))
 	assert.NoError(t, err)
-	assert.Len(t, metrics, 0)
+	assert.Len(t, metrics, 1)
 
 	metrics, err = collector.Parse([]byte(validPromGaugeMetric))
 	assert.NoError(t, err)
@@ -101,8 +99,6 @@ const validStdin = `{
   ],
   "endpoint": "xxxx",
   "append_tags": ["region=bj", "dept=cloud"],
-  "username": "xxx",
-  "password": "xxx",
   "ignore_metrics_prefix": ["gc_","go_"],
   "timeout": 500
 }
@@ -127,6 +123,23 @@ func TestStdout(t *testing.T) {
 	printMetrics(metrics)
 }
 
+func TestGather(t *testing.T) {
+	err := config.Parse([]byte(validConfigParam))
+	assert.NoError(t, err)
+
+	metrics := collector.Gather()
+	assert.NotNil(t, metrics)
+	printMetrics(metrics)
+}
+
+const validIgnoreConfigParam = `{
+  "exporter_urls":["http://127.0.0.1:8080/metrics"],
+  "append_tags": ["region=bj", "dept=cloud"],
+  "endpoint": "127.0.0.1",
+  "ignore_metrics_prefix": ["go_"],
+  "timeout": 500
+}
+`
 const validPromIgnoreMetric = `# HELP go_gc_duration_seconds A summary of the GC invocation durations.
 # TYPE go_gc_duration_seconds summary
 go_gc_duration_seconds{quantile="0"} 1.2099e-05
@@ -139,7 +152,7 @@ go_gc_duration_seconds_count 84408
 `
 
 func TestIgnoreMetric(t *testing.T) {
-	err := config.Parse([]byte(validConfigParam))
+	err := config.Parse([]byte(validIgnoreConfigParam))
 	assert.NoError(t, err)
 
 	config.Config.IgnoreMetricsPrefix = []string{"mem"}
