@@ -12,8 +12,8 @@ import (
 	dto "github.com/prometheus/client_model/go"
 	"github.com/prometheus/common/expfmt"
 
-	"github.com/n9e/prometheus-collector/config"
-	"github.com/n9e/prometheus-collector/model"
+	"github.com/n9e/prometheus-exporter-collector/config"
+	"github.com/n9e/prometheus-exporter-collector/model"
 )
 
 var now = time.Now().Unix()

@@ -9,8 +9,8 @@ import (
 	"os"
 
 	"github.com/didi/nightingale/src/dataobj"
-	"github.com/n9e/prometheus-collector/collector"
-	"github.com/n9e/prometheus-collector/config"
+	"github.com/n9e/prometheus-exporter-collector/collector"
+	"github.com/n9e/prometheus-exporter-collector/config"
 )
 
 func main() {

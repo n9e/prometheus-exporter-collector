@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/didi/nightingale/src/dataobj"
-	"github.com/n9e/prometheus-collector/config"
+	"github.com/n9e/prometheus-exporter-collector/config"
 )
 
 func Gather() []*dataobj.MetricValue {
