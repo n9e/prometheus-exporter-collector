@@ -12,7 +12,7 @@ type PluginCfg struct {
 	Endpoint            string   `json:"endpoint"`
 	Username            string   `json:"username"`
 	Password            string   `json:"password"`
-	TimeOut             int      `json:"timeout"`
+	Timeout             int      `json:"timeout"`
 	IgnoreMetricsPrefix []string `json:"ignore_metrics_prefix"`
 }
 
@@ -32,7 +32,7 @@ func Parse(bs []byte) error {
 		Endpoint:            "",
 		Username:            "",
 		Password:            "",
-		TimeOut:             500,
+		Timeout:             500,
 		IgnoreMetricsPrefix: []string{},
 	}
 
