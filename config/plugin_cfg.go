@@ -10,9 +10,7 @@ type PluginCfg struct {
 	ExporterUrls        []string `json:"exporter_urls,omitempty"`
 	AppendTags          []string `json:"append_tags"`
 	Endpoint            string   `json:"endpoint"`
-	Username            string   `json:"username"`
-	Password            string   `json:"password"`
-	TimeOut             int      `json:"timeout"`
+	Timeout             int      `json:"timeout"`
 	IgnoreMetricsPrefix []string `json:"ignore_metrics_prefix"`
 }
 
@@ -30,9 +28,7 @@ func Parse(bs []byte) error {
 		ExporterUrls:        []string{},
 		AppendTags:          []string{},
 		Endpoint:            "",
-		Username:            "",
-		Password:            "",
-		TimeOut:             500,
+		Timeout:             500,
 		IgnoreMetricsPrefix: []string{},
 	}
 

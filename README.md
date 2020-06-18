@@ -21,11 +21,8 @@ Prometheus-collector以插件形式集成在collector中，通过Nightingale插�
  exporter_urls                    | array     | Address to collect metric for prometheus exporter.
  append_tags                      | array     | Add tags for n9e metric default empty
  endpoint                         | string    | Field endpoint for n9e metric default empty
- username                         | string    | Not needed for now
- password                         | string    | Not needed for now
  ignore_metrics_prefix            | array     | Ignore metric prefix default empty
  timeout                          | int       | Timeout for access a exporter url default 500ms
  ###
-=======
  
  ###

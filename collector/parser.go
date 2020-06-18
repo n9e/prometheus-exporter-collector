@@ -67,7 +67,10 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 				metric.Metric = strings.Replace(metric.Metric, "_", ".", -1)
 				metric.Endpoint = cfg.Endpoint
 				metric.Tags = makeAppendTags(metric.TagsMap, config.AppendTagsMap)
-
+				// set provided Time, ms to s
+				if m.GetTimestampMs() > 0 {
+					metric.Timestamp = m.GetTimestampMs() / 1000
+				}
 				metricList = append(metricList, metric)
 			}
 		}

@@ -4,8 +4,6 @@
   ],
   "append_tags": ["region=bj", "dept=cloud"],
   "endpoint": "127.0.0.1",
-  "username": "",
-  "password": "",
   "ignore_metrics_prefix": ["go_"],
   "timeout": 500
 }
