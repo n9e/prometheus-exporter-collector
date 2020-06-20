@@ -63,8 +63,6 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 
 			// render endpoint info
 			for _, metric := range metrics {
-				// parse _ to dot
-				metric.Metric = strings.Replace(metric.Metric, "_", ".", -1)
 				metric.Endpoint = cfg.Endpoint
 				metric.Tags = makeAppendTags(metric.TagsMap, config.AppendTagsMap)
 				// set provided Time, ms to s
