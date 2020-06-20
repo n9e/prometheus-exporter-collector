@@ -23,6 +23,8 @@ Prometheus-exporter-collector以插件形式集成在collector中，通过Nighti
  endpoint                         | string    | Field endpoint for n9e metric default empty
  ignore_metrics_prefix            | array     | Ignore metric prefix default empty
  timeout                          | int       | Timeout for access a exporter url default 500ms
+ metric_prefix                    | string    | append metric prefix when push to n9e. e.g. 'xx_exporter.'
+ metric_type                      | map       | specify metric type
  ###
  
  ###
