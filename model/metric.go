@@ -21,3 +21,7 @@ func NewGaugeMetric(metric string, val interface{}, ts int64, tagsMap map[string
 func NewCounterMetric(metric string, val interface{}, ts int64, tagsMap map[string]string) *dataobj.MetricValue {
 	return newMetricValue(metric, val, "COUNTER", ts, tagsMap)
 }
+
+func NewMetricWithType(metric string, val interface{}, typ string, ts int64, tagsMap map[string]string) *dataobj.MetricValue {
+	return newMetricValue(metric, val, typ, ts, tagsMap)
+}

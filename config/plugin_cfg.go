@@ -7,11 +7,13 @@ import (
 )
 
 type PluginCfg struct {
-	ExporterUrls        []string `json:"exporter_urls,omitempty"`
-	AppendTags          []string `json:"append_tags"`
-	Endpoint            string   `json:"endpoint"`
-	Timeout             int      `json:"timeout"`
-	IgnoreMetricsPrefix []string `json:"ignore_metrics_prefix"`
+	ExporterUrls        []string          `json:"exporter_urls,omitempty"`
+	AppendTags          []string          `json:"append_tags"`
+	Endpoint            string            `json:"endpoint"`
+	Timeout             int               `json:"timeout"`
+	IgnoreMetricsPrefix []string          `json:"ignore_metrics_prefix"`
+	MetricPrefix        string            `json:"metric_prefix"`
+	MetricType          map[string]string `json:"metric_type"`
 }
 
 var (
@@ -30,6 +32,8 @@ func Parse(bs []byte) error {
 		Endpoint:            "",
 		Timeout:             500,
 		IgnoreMetricsPrefix: []string{},
+		MetricPrefix:        "",
+		MetricType:          make(map[string]string),
 	}
 
 	if err := json.Unmarshal(bs, &Config); err != nil {
