@@ -33,6 +33,13 @@ func Gather() []*dataobj.MetricValue {
 			defer wg.Done()
 			if metrics, err := gatherExporter(url); err == nil {
 				for _, m := range metrics {
+					if typ, exists := cfg.MetricType[m.Metric]; exists {
+						m.CounterType = typ
+					}
+
+					if cfg.MetricPrefix != "" {
+						m.Metric = cfg.MetricPrefix + m.Metric
+					}
 					metricChan <- m
 				}
 			}

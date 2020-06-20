@@ -5,5 +5,7 @@
   "append_tags": ["region=bj", "dept=cloud"],
   "endpoint": "127.0.0.1",
   "ignore_metrics_prefix": ["go_"],
+  "metric_prefix": "",
+  "metric_type": {},
   "timeout": 500
 }
