@@ -7,13 +7,14 @@ import (
 )
 
 type PluginCfg struct {
-	ExporterUrls        []string          `json:"exporter_urls,omitempty"`
-	AppendTags          []string          `json:"append_tags"`
-	Endpoint            string            `json:"endpoint"`
-	Timeout             int               `json:"timeout"`
-	IgnoreMetricsPrefix []string          `json:"ignore_metrics_prefix"`
-	MetricPrefix        string            `json:"metric_prefix"`
-	MetricType          map[string]string `json:"metric_type"`
+	ExporterUrls         []string          `json:"exporter_urls"`
+	AppendTags           []string          `json:"append_tags"`
+	Endpoint             string            `json:"endpoint"`
+	Timeout              int               `json:"timeout"`
+	IgnoreMetricsPrefix  []string          `json:"ignore_metrics_prefix"`
+	MetricPrefix         string            `json:"metric_prefix"`
+	MetricType           map[string]string `json:"metric_type"`
+	CumulativeMetricType string            `json:"cumulative_metric_type"`
 }
 
 var (
@@ -27,13 +28,14 @@ func Get() *PluginCfg {
 
 func Parse(bs []byte) error {
 	Config = &PluginCfg{
-		ExporterUrls:        []string{},
-		AppendTags:          []string{},
-		Endpoint:            "",
-		Timeout:             500,
-		IgnoreMetricsPrefix: []string{},
-		MetricPrefix:        "",
-		MetricType:          make(map[string]string),
+		ExporterUrls:         []string{},
+		AppendTags:           []string{},
+		Endpoint:             "",
+		Timeout:              500,
+		IgnoreMetricsPrefix:  []string{},
+		MetricPrefix:         "",
+		MetricType:           make(map[string]string),
+		CumulativeMetricType: "SUBTRACT",
 	}
 
 	if err := json.Unmarshal(bs, &Config); err != nil {
@@ -42,6 +44,10 @@ func Parse(bs []byte) error {
 
 	if len(Config.ExporterUrls) == 0 {
 		return fmt.Errorf("exporter urls is nil")
+	}
+
+	if Config.CumulativeMetricType != "SUBTRACT" && Config.CumulativeMetricType != "COUNTER" {
+		return fmt.Errorf("wrong counter type, only support COUNTER or SUBTRACT")
 	}
 
 	if err := parseAppendTagsMap(); err != nil {

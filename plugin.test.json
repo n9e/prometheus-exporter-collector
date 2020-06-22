@@ -1,11 +1,12 @@
 {
   "exporter_urls": [
-    "http://127.0.0.1:9104/metrics?dns=xxip:3306"
+    "http://127.0.0.1:9104/metrics"
   ],
   "append_tags": ["region=bj", "dept=cloud"],
   "endpoint": "127.0.0.1",
   "ignore_metrics_prefix": ["go_"],
   "metric_prefix": "",
   "metric_type": {},
+  "cumulative_metric_type": "SUBTRACT",
   "timeout": 500
 }
