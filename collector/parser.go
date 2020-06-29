@@ -83,10 +83,10 @@ func makeQuantiles(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	tags := makeLabels(m)
 
 	countName := fmt.Sprintf("%s_count", basename)
-	metrics = append(metrics, model.NewCounterMetric(countName, m.GetSummary().SampleCount, now, tags))
+	metrics = append(metrics, model.NewCumulativeMetric(countName, m.GetSummary().SampleCount, now, tags))
 
 	sumName := fmt.Sprintf("%s_sum", basename)
-	metrics = append(metrics, model.NewCounterMetric(sumName, m.GetSummary().SampleSum, now, tags))
+	metrics = append(metrics, model.NewCumulativeMetric(sumName, m.GetSummary().SampleSum, now, tags))
 
 	for _, q := range m.GetSummary().Quantile {
 		if !math.IsNaN(q.GetValue()) {
@@ -105,10 +105,10 @@ func makeBuckets(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	tags := makeLabels(m)
 
 	countName := fmt.Sprintf("%s_count", basename)
-	metrics = append(metrics, model.NewCounterMetric(countName, m.GetHistogram().SampleCount, now, tags))
+	metrics = append(metrics, model.NewCumulativeMetric(countName, m.GetHistogram().SampleCount, now, tags))
 
 	sumName := fmt.Sprintf("%s_sum", basename)
-	metrics = append(metrics, model.NewCounterMetric(sumName, m.GetHistogram().SampleSum, now, tags))
+	metrics = append(metrics, model.NewCumulativeMetric(sumName, m.GetHistogram().SampleSum, now, tags))
 
 	for _, b := range m.GetHistogram().Bucket {
 		tags["le"] = fmt.Sprint(b.GetUpperBound())
@@ -133,7 +133,7 @@ func makeCommon(metricName string, m *dto.Metric) []*dataobj.MetricValue {
 	} else if m.Counter != nil {
 		if !math.IsNaN(m.GetCounter().GetValue()) {
 			val = float64(m.GetCounter().GetValue())
-			metrics = append(metrics, model.NewCounterMetric(metricName, val, now, tags))
+			metrics = append(metrics, model.NewCumulativeMetric(metricName, val, now, tags))
 		}
 	} else if m.Untyped != nil {
 		// untyped as gauge
