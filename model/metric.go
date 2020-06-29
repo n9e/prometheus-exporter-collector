@@ -30,7 +30,7 @@ func NewSubtractMetric(metric string, val interface{}, ts int64, tagsMap map[str
 }
 
 func NewCumulativeMetric(metric string, val interface{}, ts int64, tagsMap map[string]string) *dataobj.MetricValue {
-	if config.Get().CumulativeMetricType == "COUNTER" {
+	if config.Get().DefaultMappingMetricType == "COUNTER" {
 		return NewCounterMetric(metric, val, ts, tagsMap)
 	}
 

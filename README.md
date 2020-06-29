@@ -25,7 +25,7 @@ Prometheus-exporter-collector以插件形式集成在collector中，通过Nighti
  timeout                          | int       | Timeout for access a exporter url default 500ms
  metric_prefix                    | string    | append metric prefix when push to n9e. e.g. 'xx_exporter.'
  metric_type                      | map       | specify metric type
- cumulative_metric_type           | string    | Prometheus cumulative metrics transform to n9e metric type. support COUNTER and SUBTRACT. default SUBTRACT
+ default_mapping_metric_type      | string    | Default conversion rule for Prometheus cumulative metrics. support COUNTER and SUBTRACT. default SUBTRACT
  ###
  
  ###

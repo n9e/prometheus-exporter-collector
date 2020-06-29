@@ -7,6 +7,6 @@
   "ignore_metrics_prefix": ["go_"],
   "metric_prefix": "",
   "metric_type": {},
-  "cumulative_metric_type": "SUBTRACT",
+  "default_mapping_metric_type": "SUBTRACT",
   "timeout": 500
 }
