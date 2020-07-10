@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/didi/nightingale/src/dataobj"
 	"github.com/n9e/prometheus-exporter-collector/config"
+	fmodel "github.com/open-falcon/falcon-plus/common/model"
 )
 
 func newMetricValue(metric string, val interface{}, dataType string, ts int64, tagsMap map[string]string) *dataobj.MetricValue {
@@ -35,4 +36,24 @@ func NewCumulativeMetric(metric string, val interface{}, ts int64, tagsMap map[s
 	}
 
 	return NewSubtractMetric(metric, val, ts, tagsMap)
+}
+
+func FmtFalconMetricValue(vs []*dataobj.MetricValue, step int64) []*fmodel.MetricValue {
+	rt := []*fmodel.MetricValue{}
+	for _, v := range vs {
+		item := &fmodel.MetricValue{
+			Endpoint: v.Endpoint,
+			Metric:   v.Metric,
+			Value:    v.Value,
+			Tags:     v.Tags,
+			Step:     step,
+		}
+		if v.CounterType == "SUBTRACT" {
+			item.Type = "COUNTER"
+		} else {
+			item.Type = v.CounterType
+		}
+		rt = append(rt, item)
+	}
+	return rt
 }

@@ -4,3 +4,6 @@
 /prometheus-exporter-collector
 /go.sum
 /main
+*.swp
+.cache
+.gocache
