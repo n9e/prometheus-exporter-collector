@@ -89,10 +89,14 @@ func makeQuantiles(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	metrics = append(metrics, model.NewCumulativeMetric(sumName, m.GetSummary().SampleSum, now, tags))
 
 	for _, q := range m.GetSummary().Quantile {
+		tagsNew := make(map[string]string)
+		for tagKey, tagValue := range tags {
+			tagsNew[tagKey] = tagValue
+		}
 		if !math.IsNaN(q.GetValue()) {
-			tags["quantile"] = fmt.Sprint(q.GetQuantile())
+			tagsNew["quantile"] = fmt.Sprint(q.GetQuantile())
 
-			metrics = append(metrics, model.NewGaugeMetric(basename, float64(q.GetValue()), now, tags))
+			metrics = append(metrics, model.NewGaugeMetric(basename, float64(q.GetValue()), now, tagsNew))
 		}
 	}
 
@@ -111,10 +115,14 @@ func makeBuckets(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	metrics = append(metrics, model.NewCumulativeMetric(sumName, m.GetHistogram().SampleSum, now, tags))
 
 	for _, b := range m.GetHistogram().Bucket {
-		tags["le"] = fmt.Sprint(b.GetUpperBound())
+		tagsNew := make(map[string]string)
+		for tagKey, tagValue := range tags {
+			tagsNew[tagKey] = tagValue
+		}
+		tagsNew["le"] = fmt.Sprint(b.GetUpperBound())
 
 		bucketName := fmt.Sprintf("%s_bucket", basename)
-		metrics = append(metrics, model.NewGaugeMetric(bucketName, float64(b.GetCumulativeCount()), now, tags))
+		metrics = append(metrics, model.NewGaugeMetric(bucketName, float64(b.GetCumulativeCount()), now, tagsNew))
 	}
 
 	return metrics
