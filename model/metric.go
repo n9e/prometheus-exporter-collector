@@ -44,9 +44,10 @@ func FmtFalconMetricValue(vs []*dataobj.MetricValue, step int64) []*fmodel.Metri
 		item := &fmodel.MetricValue{
 			Endpoint: v.Endpoint,
 			Metric:   v.Metric,
-			Value:    v.Value,
-			Tags:     v.Tags,
-			Step:     step,
+                        Value:    v.ValueUntyped,
+                        Tags:     v.Tags,
+                        Step:     step,
+                        Timestamp: v.Timestamp,
 		}
 		if v.CounterType == "SUBTRACT" {
 			item.Type = "COUNTER"
