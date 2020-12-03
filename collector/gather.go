@@ -3,6 +3,7 @@ package collector
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -54,20 +55,19 @@ func Gather() []*dataobj.MetricValue {
 }
 
 func gatherExporter(url string) ([]*dataobj.MetricValue, error) {
-	//body, err := gatherExporterUrl(url)
-	//if err != nil {
-	//	log.Printf("gather metrics from exporter error, url :[%s] ,error :%v", url, err)
-	//	return nil, err
-	//}
-	//
-	//metrics, err := Parse(body)
-	//if err != nil {
-	//	log.Printf("parse metrics error, url :[%s] ,error :%v", url, err)
-	//	return nil, err
-	//}
+	body, err := gatherExporterUrl(url)
+	if err != nil {
+		log.Printf("gather metrics from exporter error, url :[%s] ,error :%v", url, err)
+		return nil, err
+	}
 
-	//return metrics, nil
-	return []*dataobj.MetricValue{}, nil
+	metrics, err := Parse(body)
+	if err != nil {
+		log.Printf("parse metrics error, url :[%s] ,error :%v", url, err)
+		return nil, err
+	}
+
+	return metrics, nil
 }
 
 func gatherExporterUrl(url string) ([]byte, error) {
