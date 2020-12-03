@@ -11,6 +11,8 @@ Prometheus-exporter-collector以插件形式集成在collector中，通过Nighti
     $ cd $GOPATH/src/github.com/n9e
     $ git clone https://github.com/n9e/prometheus-exporter-collector.git
     $ cd prometheus-exporter-collector
+    $ export GO111MODULE=on
+    $ export GOPROXY=https://goproxy.cn
     $ go build
     $ cat plugin.test.json | ./prometheus-exporter-collector 
 
