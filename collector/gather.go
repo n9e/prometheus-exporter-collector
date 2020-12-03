@@ -3,7 +3,6 @@ package collector
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -27,9 +26,9 @@ func Gather() []*dataobj.MetricValue {
 		}
 	}()
 
-	for _, url := range cfg.ExporterUrls {
+	for _, exporterUrl := range cfg.ExporterUrls {
 		wg.Add(1)
-		go func() {
+		go func(url string) {
 			defer wg.Done()
 			if metrics, err := gatherExporter(url); err == nil {
 				for _, m := range metrics {
@@ -43,7 +42,7 @@ func Gather() []*dataobj.MetricValue {
 					metricChan <- m
 				}
 			}
-		}()
+		}(exporterUrl)
 	}
 
 	wg.Wait()
@@ -55,19 +54,20 @@ func Gather() []*dataobj.MetricValue {
 }
 
 func gatherExporter(url string) ([]*dataobj.MetricValue, error) {
-	body, err := gatherExporterUrl(url)
-	if err != nil {
-		log.Printf("gather metrics from exporter error, url :[%s] ,error :%v", url, err)
-		return nil, err
-	}
+	//body, err := gatherExporterUrl(url)
+	//if err != nil {
+	//	log.Printf("gather metrics from exporter error, url :[%s] ,error :%v", url, err)
+	//	return nil, err
+	//}
+	//
+	//metrics, err := Parse(body)
+	//if err != nil {
+	//	log.Printf("parse metrics error, url :[%s] ,error :%v", url, err)
+	//	return nil, err
+	//}
 
-	metrics, err := Parse(body)
-	if err != nil {
-		log.Printf("parse metrics error, url :[%s] ,error :%v", url, err)
-		return nil, err
-	}
-
-	return metrics, nil
+	//return metrics, nil
+	return []*dataobj.MetricValue{}, nil
 }
 
 func gatherExporterUrl(url string) ([]byte, error) {
