@@ -17,6 +17,10 @@ Prometheus-exporter-collector以插件形式集成在collector中，通过Nighti
     $ cat plugin.test.json | ./prometheus-exporter-collector 
 
 
+## 编译好的二进制
+
+http://116.85.64.82/prometheus-exporter-collector-bin-20201218.tar.gz
+
  ### 配置参数
  Name                             |  type     | Description
  ---------------------------------|-----------|--------------------------------------------------------------------------------------------------
