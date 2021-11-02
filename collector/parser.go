@@ -34,11 +34,18 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 	if err != nil {
 		return nil, fmt.Errorf("reading text format failed: %s", err)
 	}
+
 	now = time.Now().Unix()
 	// read metrics
 	for basename, mf := range metricFamilies {
+
 		metrics := []*dataobj.MetricValue{}
 		for _, m := range mf.Metric {
+			// 丢弃value中带有Nan,+Inf和-Inf的metric
+			gv := m.Gauge.GetValue()
+			if math.IsInf(gv, 0) || math.IsNaN(gv) {
+				continue
+			}
 			// pass ignore metric
 			if filterIgnoreMetric(basename) {
 				continue
