@@ -86,7 +86,7 @@ func makeQuantiles(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	metrics := []*dataobj.MetricValue{}
 	tags := makeLabels(m)
 
-	// 不能保证去到的metric一定是按照标准输出的,只能尽量去兼容
+	// 不能保证取到的metric一定是按照标准输出的,只能尽量去兼容
 
 	if m.GetSummary().SampleCount != nil {
 		if !math.IsNaN(float64(m.GetSummary().GetSampleCount())) && !math.IsInf(float64(m.GetSummary().GetSampleCount()), 0) {
