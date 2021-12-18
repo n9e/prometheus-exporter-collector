@@ -66,6 +66,46 @@ const validPromUntypedMetric = `# HELP mysql_global_status_aborted_clients Gener
 # TYPE mysql_global_status_aborted_clients untyped
 mysql_global_status_aborted_clients 62539
 `
+const validPromAbnormalMetric = `# HELP aggregated_results aggregated_results counter
+# TYPE aggregated_results counter
+aggregated_results{namespace="default",type="Nan"} Nan
+aggregated_results{namespace="default",type="-Inf"} -Inf
+aggregated_results{namespace="default",type="+Inf"} +Inf
+aggregated_results{namespace="default",type="value"} 6.5928518e+07
+# HELP block_pool_free block_pool_free gauge
+# TYPE block_pool_free gauge
+block_pool_free{namespace="default"} Nan
+block_pool_free{namespace="default"} -Inf
+block_pool_free{namespace="default"} +Inf
+block_pool_free{namespace="default"} 2111
+# TYPE bootstrapper_commitlog_commitlog_duration summary
+bootstrapper_commitlog_commitlog_duration{quantile="0.5"} 100
+bootstrapper_commitlog_commitlog_duration{quantile="0.75"} Nan
+bootstrapper_commitlog_commitlog_duration{quantile="0.95"} +Inf
+bootstrapper_commitlog_commitlog_duration{quantile="0.99"} -Inf
+bootstrapper_commitlog_commitlog_duration_count 100
+bootstrapper_commitlog_commitlog_duration_sum Nan
+# TYPE mysql_global_status_aborted_clients untyped
+mysql_global_status_aborted_clients{namespace="default",type="Nan"} Nan
+mysql_global_status_aborted_clients{namespace="default",type="-Inf"} -Inf
+mysql_global_status_aborted_clients{namespace="default",type="+Inf"} +Inf
+mysql_global_status_aborted_clients{namespace="default",type="value"} 62539
+# HELP database_bootstrap_errors_latency database_bootstrap_errors_latency histogram
+# TYPE database_bootstrap_errors_latency histogram
+database_bootstrap_errors_latency_bucket{namespace="default",le="0.002",type="Nan"} Nan
+database_bootstrap_errors_latency_bucket{namespace="default",le="0.004",type="-Inf"} -Inf
+database_bootstrap_errors_latency_bucket{namespace="default",le="0.006",type="+Inf"} +Inf
+database_bootstrap_errors_latency_bucket{namespace="default",le="0.008",type="value"} 0
+`
+
+func TestPromAbnormalMetricParser(t *testing.T) {
+	err := config.Parse([]byte(validConfigParam))
+	assert.NoError(t, err)
+
+	metrics, err := collector.Parse([]byte(validPromAbnormalMetric))
+	assert.NoError(t, err)
+	assert.Len(t, metrics, 9)
+}
 
 func TestPromMetricParser(t *testing.T) {
 	err := config.Parse([]byte(validConfigParam))
