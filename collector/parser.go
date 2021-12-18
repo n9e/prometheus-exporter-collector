@@ -41,11 +41,6 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 
 		metrics := []*dataobj.MetricValue{}
 		for _, m := range mf.Metric {
-			// 丢弃value中带有Nan,+Inf和-Inf的metric
-			gv := m.Gauge.GetValue()
-			if math.IsInf(gv, 0) || math.IsNaN(gv) {
-				continue
-			}
 			// pass ignore metric
 			if filterIgnoreMetric(basename) {
 				continue
@@ -88,19 +83,25 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 func makeQuantiles(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	metrics := []*dataobj.MetricValue{}
 	tags := makeLabels(m)
-
-	countName := fmt.Sprintf("%s_count", basename)
-	metrics = append(metrics, model.NewCumulativeMetric(countName, m.GetSummary().SampleCount, now, tags))
-
-	sumName := fmt.Sprintf("%s_sum", basename)
-	metrics = append(metrics, model.NewCumulativeMetric(sumName, m.GetSummary().SampleSum, now, tags))
+	if m.GetSummary().SampleCount != nil {
+		if !math.IsNaN(float64(m.GetSummary().GetSampleCount())) && !math.IsInf(float64(m.GetSummary().GetSampleCount()), 0) {
+			countName := fmt.Sprintf("%s_count", basename)
+			metrics = append(metrics, model.NewCumulativeMetric(countName, m.GetSummary().SampleCount, now, tags))
+		}
+	}
+	if m.GetSummary().SampleSum != nil {
+		if !math.IsNaN(m.GetSummary().GetSampleSum()) && !math.IsInf(m.GetSummary().GetSampleSum(), 0) {
+			sumName := fmt.Sprintf("%s_sum", basename)
+			metrics = append(metrics, model.NewCumulativeMetric(sumName, m.GetSummary().SampleSum, now, tags))
+		}
+	}
 
 	for _, q := range m.GetSummary().Quantile {
-		tagsNew := make(map[string]string)
-		for tagKey, tagValue := range tags {
-			tagsNew[tagKey] = tagValue
-		}
-		if !math.IsNaN(q.GetValue()) {
+		if !math.IsNaN(q.GetValue()) && !math.IsInf(q.GetValue(), 0) {
+			tagsNew := make(map[string]string)
+			for tagKey, tagValue := range tags {
+				tagsNew[tagKey] = tagValue
+			}
 			tagsNew["quantile"] = fmt.Sprint(q.GetQuantile())
 
 			metrics = append(metrics, model.NewGaugeMetric(basename, float64(q.GetValue()), now, tagsNew))
@@ -115,21 +116,29 @@ func makeBuckets(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	metrics := []*dataobj.MetricValue{}
 	tags := makeLabels(m)
 
-	countName := fmt.Sprintf("%s_count", basename)
-	metrics = append(metrics, model.NewCumulativeMetric(countName, m.GetHistogram().SampleCount, now, tags))
-
-	sumName := fmt.Sprintf("%s_sum", basename)
-	metrics = append(metrics, model.NewCumulativeMetric(sumName, m.GetHistogram().SampleSum, now, tags))
+	if m.GetHistogram().SampleCount != nil {
+		if !math.IsNaN(float64(m.GetHistogram().GetSampleCount())) && !math.IsInf(float64(m.GetHistogram().GetSampleCount()), 0) {
+			countName := fmt.Sprintf("%s_count", basename)
+			metrics = append(metrics, model.NewCumulativeMetric(countName, m.GetHistogram().SampleCount, now, tags))
+		}
+	}
+	if m.GetHistogram().SampleSum != nil {
+		if !math.IsNaN(m.GetHistogram().GetSampleSum()) && !math.IsInf(m.GetHistogram().GetSampleSum(), 0) {
+			sumName := fmt.Sprintf("%s_sum", basename)
+			metrics = append(metrics, model.NewCumulativeMetric(sumName, m.GetHistogram().SampleSum, now, tags))
+		}
+	}
 
 	for _, b := range m.GetHistogram().Bucket {
-		tagsNew := make(map[string]string)
-		for tagKey, tagValue := range tags {
-			tagsNew[tagKey] = tagValue
+		if !math.IsNaN(float64(b.GetCumulativeCount())) && !math.IsInf(float64(b.GetCumulativeCount()), 0) {
+			tagsNew := make(map[string]string)
+			for tagKey, tagValue := range tags {
+				tagsNew[tagKey] = tagValue
+			}
+			tagsNew["le"] = fmt.Sprint(b.GetUpperBound())
+			bucketName := fmt.Sprintf("%s_bucket", basename)
+			metrics = append(metrics, model.NewGaugeMetric(bucketName, float64(b.GetCumulativeCount()), now, tagsNew))
 		}
-		tagsNew["le"] = fmt.Sprint(b.GetUpperBound())
-
-		bucketName := fmt.Sprintf("%s_bucket", basename)
-		metrics = append(metrics, model.NewGaugeMetric(bucketName, float64(b.GetCumulativeCount()), now, tagsNew))
 	}
 
 	return metrics
@@ -141,18 +150,18 @@ func makeCommon(metricName string, m *dto.Metric) []*dataobj.MetricValue {
 	metrics := []*dataobj.MetricValue{}
 	tags := makeLabels(m)
 	if m.Gauge != nil {
-		if !math.IsNaN(m.GetGauge().GetValue()) {
+		if !math.IsNaN(m.GetGauge().GetValue()) && !math.IsInf(m.GetGauge().GetValue(), 0) {
 			val = float64(m.GetGauge().GetValue())
 			metrics = append(metrics, model.NewGaugeMetric(metricName, val, now, tags))
 		}
 	} else if m.Counter != nil {
-		if !math.IsNaN(m.GetCounter().GetValue()) {
+		if !math.IsNaN(m.GetCounter().GetValue()) && !math.IsInf(m.GetCounter().GetValue(), 0) {
 			val = float64(m.GetCounter().GetValue())
 			metrics = append(metrics, model.NewCumulativeMetric(metricName, val, now, tags))
 		}
 	} else if m.Untyped != nil {
 		// untyped as gauge
-		if !math.IsNaN(m.GetUntyped().GetValue()) {
+		if !math.IsNaN(m.GetUntyped().GetValue()) && !math.IsInf(m.GetUntyped().GetValue(), 0) {
 			val = float64(m.GetUntyped().GetValue())
 			metrics = append(metrics, model.NewGaugeMetric(metricName, val, now, tags))
 		}

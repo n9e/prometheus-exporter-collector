@@ -58,7 +58,7 @@ const validPromHistogramMetric = `# HELP mysql_global_status_test histogram test
 mysql_global_status_test_bucket{le="500"} 111
 mysql_global_status_test_bucket{le="50"} 85
 mysql_global_status_test_bucket{le="5"} 378
-mysql_global_status_test_bucket{le="1"} 22
+mysql_global_status_test_bucket{le="2"} Nan
 mysql_global_status_test_sum 794548
 mysql_global_status_test_count 1422
 `
