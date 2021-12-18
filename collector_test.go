@@ -29,14 +29,14 @@ mysql_global_status_buffer_pool_dirty_pages 132
 # HELP mysql_global_status_buffer_pool_pages Innodb buffer pool pages by state.
 # TYPE mysql_global_status_buffer_pool_pages gauge
 mysql_global_status_buffer_pool_pages{state="data"} 794548
-mysql_global_status_buffer_pool_pages{state="free"} 243560
+mysql_global_status_buffer_pool_pages{state="free"} +Inf
 mysql_global_status_buffer_pool_pages{state="misc"} 10460
 mysql_global_status_buffer_pool_pages{state="old"} 293137
 `
 const validPromCounterMetric = `# HELP mysql_global_status_buffer_pool_page_changes_total Innodb buffer pool page state changes.
 # TYPE mysql_global_status_buffer_pool_page_changes_total counter
 mysql_global_status_buffer_pool_page_changes_total{operation="flushed"} 1.4547024e+07
-mysql_global_status_buffer_pool_page_changes_total{operation="lru_flushed"} 0
+mysql_global_status_buffer_pool_page_changes_total{operation="lru_flushed"} -Inf
 mysql_global_status_buffer_pool_page_changes_total{operation="made_not_young"} 1.7149202e+07
 mysql_global_status_buffer_pool_page_changes_total{operation="made_young"} 979263
 # HELP mysql_exporter_scrapes_total Total number of times MySQL was scraped for metrics.
@@ -46,9 +46,9 @@ mysql_exporter_scrapes_total 1
 const validPromSummaryMetric = `# HELP go_gc_duration_seconds A summary of the GC invocation durations.
 # TYPE go_gc_duration_seconds summary
 go_gc_duration_seconds{quantile="0"} 543
-go_gc_duration_seconds{quantile="0.25"} 33
-go_gc_duration_seconds{quantile="0.5"} 66
-go_gc_duration_seconds{quantile="0.75"} 23
+go_gc_duration_seconds{quantile="0.25"} -Inf
+go_gc_duration_seconds{quantile="0.5"} +Inf
+go_gc_duration_seconds{quantile="0.75"} Nan
 go_gc_duration_seconds{quantile="1"} 0
 go_gc_duration_seconds_sum 794548
 go_gc_duration_seconds_count 1444
