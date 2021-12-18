@@ -41,10 +41,12 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 
 		metrics := []*dataobj.MetricValue{}
 		for _, m := range mf.Metric {
+
 			// pass ignore metric
 			if filterIgnoreMetric(basename) {
 				continue
 			}
+
 			switch mf.GetType() {
 			case dto.MetricType_GAUGE:
 				// gauge metric
@@ -83,6 +85,9 @@ func Parse(buf []byte) ([]*dataobj.MetricValue, error) {
 func makeQuantiles(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	metrics := []*dataobj.MetricValue{}
 	tags := makeLabels(m)
+
+	// 不能保证去到的metric一定是按照标准输出的,只能尽量去兼容
+
 	if m.GetSummary().SampleCount != nil {
 		if !math.IsNaN(float64(m.GetSummary().GetSampleCount())) && !math.IsInf(float64(m.GetSummary().GetSampleCount()), 0) {
 			countName := fmt.Sprintf("%s_count", basename)
@@ -104,7 +109,7 @@ func makeQuantiles(basename string, m *dto.Metric) []*dataobj.MetricValue {
 			}
 			tagsNew["quantile"] = fmt.Sprint(q.GetQuantile())
 
-			metrics = append(metrics, model.NewGaugeMetric(basename, float64(q.GetValue()), now, tagsNew))
+			metrics = append(metrics, model.NewGaugeMetric(basename, q.GetValue(), now, tagsNew))
 		}
 	}
 
@@ -122,6 +127,7 @@ func makeBuckets(basename string, m *dto.Metric) []*dataobj.MetricValue {
 			metrics = append(metrics, model.NewCumulativeMetric(countName, m.GetHistogram().SampleCount, now, tags))
 		}
 	}
+
 	if m.GetHistogram().SampleSum != nil {
 		if !math.IsNaN(m.GetHistogram().GetSampleSum()) && !math.IsInf(m.GetHistogram().GetSampleSum(), 0) {
 			sumName := fmt.Sprintf("%s_sum", basename)
@@ -130,16 +136,16 @@ func makeBuckets(basename string, m *dto.Metric) []*dataobj.MetricValue {
 	}
 
 	for _, b := range m.GetHistogram().Bucket {
-		if !math.IsNaN(float64(b.GetCumulativeCount())) && !math.IsInf(float64(b.GetCumulativeCount()), 0) {
-			tagsNew := make(map[string]string)
-			for tagKey, tagValue := range tags {
-				tagsNew[tagKey] = tagValue
-			}
-			tagsNew["le"] = fmt.Sprint(b.GetUpperBound())
-			bucketName := fmt.Sprintf("%s_bucket", basename)
-			metrics = append(metrics, model.NewGaugeMetric(bucketName, float64(b.GetCumulativeCount()), now, tagsNew))
+		//if !math.IsNaN(float64(b.GetCumulativeCount())) && !math.IsInf(float64(b.GetCumulativeCount()), 0) {
+		tagsNew := make(map[string]string)
+		for tagKey, tagValue := range tags {
+			tagsNew[tagKey] = tagValue
 		}
+		tagsNew["le"] = fmt.Sprint(b.GetUpperBound())
+		bucketName := fmt.Sprintf("%s_bucket", basename)
+		metrics = append(metrics, model.NewGaugeMetric(bucketName, float64(b.GetCumulativeCount()), now, tagsNew))
 	}
+	//}
 
 	return metrics
 }
